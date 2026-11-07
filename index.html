@@ -585,11 +585,11 @@ const icRight = (c = 'w-4 h-4') => `<svg class="${c}" viewBox="0 0 24 24" fill="
 /* ================= What I ship ================= */
 // Demo videos live in assets/videos/. Swap a file here to change a card's preview.
 const VIDEOS = {
-  p01: 'assets/videos/p01-idp-demo.mp4',
-  p02: 'assets/videos/p02-knowledge-assistant-demo.mp4',
-  p03: 'assets/videos/p03-onboarding-agent-demo.mp4',
-  p04: 'assets/videos/p04-rfi-assistant-demo.mp4',
-  p05: 'assets/videos/p05-policydesk-demo.mp4'
+  p01: 'p01-idp-demo.mp4',
+  p02: 'p02-knowledge-assistant-demo.mp4',
+  p03: 'p03-onboarding-agent-demo.mp4',
+  p04: 'p04-rfi-assistant-demo.mp4',
+  p05: 'p05-policydesk-demo.mp4'
 };
 const SHIP = {
   p01: { cat: 'doc', kind: 'Document AI', plat: 'Gemini · n8n', name: 'Intelligent Document Processing', where: 'Canadian AP and contracts · concept',
@@ -746,7 +746,7 @@ document.getElementById('marquee').innerHTML = once + once;
 const footCols = [
   ['Case studies', PROJECTS.map(p => [`${p.num} ${p.short}`, '#' + p.id, true])],
   ['Connect', [['LinkedIn', 'https://www.linkedin.com/in/vikramsreenivasan/'], ['GitHub', 'https://github.com/vikram-pm'], ['Email', 'mailto:vikramkumarseenivasan1@gmail.com']]],
-  ['Resources', [['Résumé', 'assets/Vikram-Seenivasan-Resume.pdf'], ['IDP demo', 'https://vikram-pm.github.io/idp-canada-ap-contracts'], ['PolicyDesk demo', 'https://vikram-pm.github.io/PolicyDesk-AI']]]
+  ['Resources', [['Résumé', 'Vikram-Seenivasan-Resume.pdf'], ['IDP demo', 'https://vikram-pm.github.io/idp-canada-ap-contracts'], ['PolicyDesk demo', 'https://vikram-pm.github.io/PolicyDesk-AI']]]
 ];
 document.getElementById('linkCols').innerHTML = footCols.map(([t, ls], i) => `
   <div class="fadeup" style="--d:${(i * 0.08).toFixed(2)}s">

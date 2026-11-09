@@ -420,7 +420,7 @@ const PROJECTS = [
     learnings: ['Interview feedback asked for a model-fit assessment, false-negative testing and harder guardrails. Those are the next additions.',
                 'Duplicate-number checks became informational notes rather than blockers, to cut noise for reviewers.',
                 'An enterprise path maps the prototype onto Microsoft Azure and Copilot, covering security and cost questions.'],
-    links: [['Live case study and demo', 'https://vikram-pm.github.io/idp-canada-ap-contracts'], ['GitHub repo', 'https://github.com/vikram-pm/idp-canada-ap-contracts']]
+    links: [['Live prototype', 'https://vikram-pm.github.io/idp-canada-ap-contracts/#demo'], ['Case study', 'https://vikram-pm.github.io/idp-canada-ap-contracts'], ['GitHub repo', 'https://github.com/vikram-pm/idp-canada-ap-contracts']]
   },
   {
     id: 'p02', num: '02', short: 'Knowledge',
@@ -452,7 +452,7 @@ const PROJECTS = [
     learnings: ['Usability testing moved the warning above the answer, where people actually read it.',
                 'Renaming the “Low” badge to “Needs an expert” made the hand-off feel like help, not failure.',
                 'ROI uses stated assumptions: 220 working days, $85/h consultant and $110/h manager time, $245K year-one cost.'],
-    links: [['GitHub repo and case study', 'https://github.com/vikram-pm/Knowledge-Assistant']]
+    links: [['Live prototype', 'https://vikram-pm.github.io/Knowledge-Assistant/prototype/'], ['GitHub repo and case study', 'https://github.com/vikram-pm/Knowledge-Assistant']]
   },
   {
     id: 'p03', num: '03', short: 'Onboarding',
@@ -485,7 +485,7 @@ const PROJECTS = [
     learnings: ['The biggest delay is probably waiting on access, not learning. Interviews will test that before the PRD is locked.',
                 'Known risk: project managers may coach control-group joiners and blur the result.',
                 'Responsible AI covers PIPEDA, Quebec’s Law 25, Ontario’s electronic monitoring disclosure rules and AODA.'],
-    links: []
+    links: [['Live prototype', 'https://vikram-pm.github.io/AI-Onboarding-Agent/prototype.html']]
   },
   {
     id: 'p04', num: '04', short: 'RFI',
@@ -517,7 +517,7 @@ const PROJECTS = [
     resultsNote: 'Evaluation numbers will be added once the test set is scored.',
     learnings: ['Life-safety items always go to a person, whatever the AI’s confidence.',
                 'Framed as a concept feature for a Linarc-style platform, clearly not an official product or roadmap item.'],
-    links: []
+    links: [['Live prototype', 'https://vikram-pm.github.io/p04-rfi-assistant/']]
   },
   {
     id: 'p05', num: '05', short: 'PolicyDesk',
@@ -549,7 +549,7 @@ const PROJECTS = [
     resultsNote: 'Tuning reached 100% on the original set, but the honest number is the 90% holdout score, so that is the one reported.',
     learnings: ['Three failure modes were fixed: advice answered as fact, a policy-specific question answered without checking, and a false escalation.',
                 'The case study maps every AI tool used to the 4D framework: delegation, description, discernment and diligence.'],
-    links: [['Live case study', 'https://vikram-pm.github.io/PolicyDesk-AI']]
+    links: [['Live prototype', 'https://vikram-pm.github.io/PolicyDesk-AI/prototype/'], ['Case study', 'https://vikram-pm.github.io/PolicyDesk-AI']]
   }
 ];
 
@@ -740,7 +740,7 @@ document.getElementById('marquee').innerHTML = once + once;
 const footCols = [
   ['Case studies', PROJECTS.map(p => [`${p.num} ${p.short}`, '#' + p.id, true])],
   ['Connect', [['LinkedIn', 'https://www.linkedin.com/in/vikramsreenivasan/'], ['GitHub', 'https://github.com/vikram-pm'], ['Email', 'mailto:vikramkumarseenivasan1@gmail.com']]],
-  ['Resources', [['Résumé', 'Vikram-Seenivasan-Resume.pdf'], ['IDP demo', 'https://vikram-pm.github.io/idp-canada-ap-contracts'], ['PolicyDesk demo', 'https://vikram-pm.github.io/PolicyDesk-AI']]]
+  ['Resources', [['Résumé', 'Vikram-Seenivasan-Resume.pdf'], ['IDP demo', 'https://vikram-pm.github.io/idp-canada-ap-contracts/#demo'], ['PolicyDesk demo', 'https://vikram-pm.github.io/PolicyDesk-AI/prototype/']]]
 ];
 document.getElementById('linkCols').innerHTML = footCols.map(([t, ls], i) => `
   <div class="fadeup" style="--d:${(i * 0.08).toFixed(2)}s">

@@ -1223,7 +1223,7 @@ function createScene({ container, canvas, onReady }) {
     const tAmp = 1 + 0.7 * smooth(0.4, 1.0, pr) * (1 - smooth(1.4, 1.9, pr));
     // The sphere lives inside the "How I ship" card area: sized to it and kept centred in view while it scrolls past.
     let tForm = 0, tRel = smooth(2.7, 3.4, pr);
-    const shell = document.getElementById('lifecycleShell');
+    const shell = document.getElementById('lifecycleShell') || document.getElementById('process');
     if (shell) {
       const r = shell.getBoundingClientRect(), vh = innerHeight, vw = innerWidth;
       const dia = Math.min(r.width, r.height, vh * 0.86) * 0.92;

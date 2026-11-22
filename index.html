@@ -808,14 +808,12 @@ jRender();
 
 /* ================= AI twin ================= */
 // Viki, the knowledge-base API behind this panel, answers from Vikram's notes
-// and cites them. Paste the deployed API URL here, ending in /api/ask:
-//   const VIKI_ENDPOINT = 'https://<project>.vercel.app/api/ask';
-// Empty is a safe default: the panel falls back to the built-in FAQ below, so
-// the live site keeps working until the URL is filled in.
+// and cites them. It's hosted on Netlify. If it's slow, down or over quota,
+// the panel falls back to the built-in FAQ below, so the site keeps working.
 //
 // No API key belongs in this file, or anywhere in this repo. The key lives in
 // the API's own environment; this is a plain public endpoint.
-const VIKI_ENDPOINT = '';
+const VIKI_ENDPOINT = 'https://second-brain-xrtq.netlify.app/api/ask';
 
 // How long to wait before giving up on a question. The API budgets 20s for
 // itself, so this sits just past that — a cold start loads an embedding model
@@ -946,11 +944,17 @@ function twinSetStatus(mode) {
   document.getElementById('twinStatus').textContent = mode === 'offline' ? 'Offline mode, answering from saved FAQs' : 'Online, trained on my portfolio';
   document.getElementById('twinDot').className = 'w-1.5 h-1.5 rounded-full ' + (mode === 'offline' ? 'bg-amber-500' : 'bg-emerald-500');
 }
-function twinOffline(q) {
+/** The best-matching built-in FAQ answer, or null when nothing matches. */
+function twinFaqMatch(q) {
   const t = q.toLowerCase(); let best = null, score = 0;
   for (const [keys, ans] of TWIN_FAQ) { const sc = keys.filter(k => t.includes(k)).length; if (sc > score) { score = sc; best = ans; } }
-  return best || 'I don’t have that in Vikram’s portfolio yet. Try one of the suggested questions, or email him using the Contact section.';
+  return best;
 }
+function twinOffline(q) {
+  return twinFaqMatch(q) || 'I don’t have that in Vikram’s portfolio yet. Try one of the suggested questions, or email him using the Contact section.';
+}
+// Viki's reply when none of its notes cover a question.
+const VIKI_NO_ANSWER = /isn['’]t in Vikram['’]s knowledge base/i;
 /**
  * The last four turns, in the shape Viki expects: {role:'user'|'viki', text}.
  * Enough for "yes, elaborate" to resolve, short enough to stay cheap.
@@ -986,7 +990,9 @@ async function twinAskAI(q, onText) {
       // Viki writes its own visitor-facing copy for the cases it expects —
       // too long, too many questions — so pass that through rather than
       // inventing a second wording that will drift from it.
-      if (res.status === 429 || res.status === 400) throw { code: 'handled', text: data.error };
+      // 503 is Viki being briefly busy, not down, so it shouldn't switch the
+      // whole session to offline mode.
+      if (res.status === 429 || res.status === 400 || res.status === 503) throw { code: 'handled', status: res.status, text: data.error || data.answer };
       throw { code: 'endpoint' };
     }
     return { answer: (data.answer || '').trim(), sources: Array.isArray(data.sources) ? data.sources : [] };
@@ -1017,10 +1023,19 @@ async function twinAsk(q) {
       const r = await twinAskAI(q, t => { b.textContent = t; twinLog.scrollTop = twinLog.scrollHeight; });
       answer = r.answer; sources = r.sources;
       twinSetStatus('online');
+      // Viki is up but has no note for this. A built-in answer beats a dead end.
+      if (VIKI_NO_ANSWER.test(answer)) {
+        const faq = twinFaqMatch(q);
+        if (faq) { answer = faq; sources = []; }
+      }
     } catch (e) {
-      if (e && e.code === 'handled' && e.text) {
-        // A limit Viki enforces on purpose. Still online, so don't flip the dot.
-        answer = e.text;
+      if (e && e.code === 'handled') {
+        // Over its budget or briefly busy (a too-long question is the
+        // visitor's to fix, so that one keeps Viki's wording). Answer from the
+        // FAQ when it covers the question, otherwise pass Viki's own message
+        // through. Still online, so the dot stays green.
+        const faq = e.status !== 400 ? twinFaqMatch(q) : null;
+        answer = faq || e.text || '';
       } else {
         // Anything else — cold, down, over quota, no network — falls back to
         // the built-in FAQ rather than leaving the visitor with an apology.

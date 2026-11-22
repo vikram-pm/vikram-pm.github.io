@@ -944,11 +944,21 @@ function twinSetStatus(mode) {
   document.getElementById('twinStatus').textContent = mode === 'offline' ? 'Offline mode, answering from saved FAQs' : 'Online, trained on my portfolio';
   document.getElementById('twinDot').className = 'w-1.5 h-1.5 rounded-full ' + (mode === 'offline' ? 'bg-amber-500' : 'bg-emerald-500');
 }
-/** The best-matching built-in FAQ answer, or null when nothing matches. */
-function twinFaqMatch(q) {
+/**
+ * The best-matching built-in FAQ answer, or null if nothing reaches
+ * `minKeywords` matching keywords.
+ *
+ * One keyword is a weak signal: "how could he improve the onboarding?" matches
+ * the weaknesses answer on the word "improve" alone and would be answered with
+ * a paragraph about saying no to his manager. Callers with nothing else to show
+ * — Viki down, or briefly busy — still take that bet, because a roughly
+ * relevant answer beats an apology. The one caller that already HAS a reply
+ * from Viki asks for two, below.
+ */
+function twinFaqMatch(q, minKeywords = 1) {
   const t = q.toLowerCase(); let best = null, score = 0;
   for (const [keys, ans] of TWIN_FAQ) { const sc = keys.filter(k => t.includes(k)).length; if (sc > score) { score = sc; best = ans; } }
-  return best;
+  return score >= minKeywords ? best : null;
 }
 function twinOffline(q) {
   return twinFaqMatch(q) || 'I don’t have that in Vikram’s portfolio yet. Try one of the suggested questions, or email him using the Contact section.';
@@ -1023,9 +1033,13 @@ async function twinAsk(q) {
       const r = await twinAskAI(q, t => { b.textContent = t; twinLog.scrollTop = twinLog.scrollHeight; });
       answer = r.answer; sources = r.sources;
       twinSetStatus('online');
-      // Viki is up but has no note for this. A built-in answer beats a dead end.
+      // Viki is up but has no note for this. A built-in answer beats a dead
+      // end, but only on a confident match — two keywords or more. Viki has
+      // already given an honest answer here that names what it does cover and
+      // points at the Contact section, so a loosely matched FAQ paragraph
+      // about something else is a downgrade, not a rescue.
       if (VIKI_NO_ANSWER.test(answer)) {
-        const faq = twinFaqMatch(q);
+        const faq = twinFaqMatch(q, 2);
         if (faq) { answer = faq; sources = []; }
       }
     } catch (e) {

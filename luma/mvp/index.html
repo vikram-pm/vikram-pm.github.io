@@ -262,7 +262,7 @@ function offline(text){const l=text.toLowerCase().replace(/[’']/g,"'");const t
  if(/(what's|what is|anything) (on|happening|planned)|plan for (today|tomorrow)|my day|today look|morning briefing|good morning/.test(l)){const d=dayOf(l);const w=FAMILY.week[d];
   const names=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];const evs=w.events.map(e=>e[1]);
   const rec=w.events.find(e=>e[0]==="recycle");if(rec)offer={title:"Put out the recycling",date:TODAY(),icon:"recycle",done:"Done, I'll remind you at 8 tonight."};
-  return {say:(/tomorrow/.test(l)?"Tomorrow is "+names[d]+". ":"Good morning! It's "+names[d]+". ")+cap(evs.join(", "))+", and "+w.dinner+" for dinner."+(rec?" Want a reminder for the recycling?":""),
+  return {say:(/tomorrow/.test(l)?"Tomorrow is "+names[d]+". ":"Here's today. It's "+names[d]+". ")+cap(evs.join(", "))+", and "+w.dinner+" for dinner."+(rec?" Want a reminder for the recycling?":""),
    mood:rec?"approval":"happy",action:{type:"none"},icons:w.events.map(e=>e[0]).concat(["dinner"])};}
  if(/dinner|eat tonight|cook tonight/.test(l)){const w=FAMILY.week[dayOf(l)];return {say:cap(w.dinner)+" is on the plan"+(/tomorrow/.test(l)?" for tomorrow.":" tonight."),mood:"happy",action:{type:"none"},icons:["dinner"]};}
  if(/teacher|reading|sight words/.test(l)){offer={title:"Ten minutes of sight words",date:TODAY(),icon:"book",done:"Added for tonight, right after dinner."};

@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Luma MVP · Demo</title><meta name="description" content="Luma, a voice-first family companion: a public demo of the MVP flow by Vikram Seenivasan.">
+<title>Luma · Live demo</title><meta name="description" content="Luma, a voice-first family companion: a public demo of the MVP flow by Vikram Seenivasan.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
@@ -12,7 +12,7 @@ body{background:var(--sunken);color:var(--ink);font:15px/1.5 var(--font);margin:
 h1,h2,h3,h4{font-family:var(--font-d);margin:0;font-weight:600}
 button,input{font:inherit}button{cursor:pointer}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-.layout{max-width:1200px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:390px minmax(0,1fr);gap:28px;align-items:start}
+.layout{min-height:100vh;min-height:100dvh;display:flex!important;align-items:center;justify-content:center;max-width:none;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:390px minmax(0,1fr);gap:28px;align-items:start}
 @media (max-width:900px){.layout{grid-template-columns:1fr;padding:0}.side{padding:20px max(16px,env(safe-area-inset-right,0px)) 32px max(16px,env(safe-area-inset-left,0px))}}
 .phone{position:sticky;top:24px;width:390px;height:844px;border-radius:44px;overflow:hidden;background:#2E3260;color:#fff;box-shadow:0 0 0 10px #14161F}
 @media (max-width:900px){.phone{position:relative;top:0;width:100%;height:100vh;height:100dvh;border-radius:0;box-shadow:none}}
@@ -119,6 +119,13 @@ button,input{font:inherit}button{cursor:pointer}
 .stack div{border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--muted)}
 .stack b{display:block;color:var(--ink)}
 .demo-note{background:var(--agent-bg);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:14px;margin:10px 0 0;max-width:62ch}.demo-note a{color:var(--agent);font-weight:600}
+
+/* phone-only demo */
+body{background:radial-gradient(120% 90% at 50% 0%,#2A2F5C 0%,#14162B 55%,#0B0C18 100%)!important}
+.layout{padding:16px!important}
+.phone{position:relative!important;top:0!important;transform:scale(var(--fit,1));transform-origin:center center}
+@media (max-width:900px){.layout{padding:0!important}.phone{transform:none}}
+.vhint{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);text-align:center;font-size:12px;color:rgba(255,255,255,.7);z-index:3}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 </style>
 
@@ -169,6 +176,7 @@ button,input{font:inherit}button{cursor:pointer}
  <button class="side-btn glass" id="progBtn" type="button" aria-label="Goals and progress"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span class="dot" id="progDot" hidden></span></button>
 </div>
 
+<div class="vhint" id="vhint">Tap the mic and talk to Luma</div>
 <section class="sheet" id="chat" aria-label="Conversation">
  <div class="grab" aria-hidden="true"></div>
  <div class="sh-head"><h2>Conversation</h2><button class="close" type="button" id="chatClose" aria-label="Close conversation"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -184,21 +192,6 @@ button,input{font:inherit}button{cursor:pointer}
 </section>
 </div>
 
-<div class="side">
- <h1>Luma · Mobile MVP</h1>
- <p class="demo-note"><b>Public demo.</b> This version runs the example flow with a built-in rules engine, so it works without signing in. Tap a “Try saying” suggestion on the phone. <a href="../">Read the case study</a></p>
- <p>The first end-to-end slice of Luma. Say a family goal out loud; Luma spots it, proposes a plan, adds the sessions as tasks once you agree, then tracks progress and follows up. Your goals and tasks are saved in this browser, so they’re here next time you open it.</p>
- <div class="panel"><h2>MVP flow</h2><ol class="flow" id="flow"></ol></div>
- <div class="panel"><h2>What’s saved</h2><p class="data" id="dataText">Loading…</p><div class="row" style="margin-top:10px;max-width:420px" id="resetRow"><button class="btn" type="button" id="resetBtn">Clear my goals and tasks</button></div></div>
- <div class="panel"><h2>Running live</h2><div class="caps" id="caps"></div>
-  <div class="stack" style="margin-top:14px">
-   <div><b>Planned stack</b>Expo (React Native) app, Supabase for family data, Claude API behind a server function.</div>
-   <div><b>In this public demo</b>A rules engine runs the example family flow and saves goals and tasks in your browser. The full version uses Claude for understanding and planning, with voice in and out.</div>
-   <div><b>Design system</b>Luma tokens and components: Character, VoiceButton, GoalCard, TaskCard, ApprovalCard.</div>
-   <div><b>Trust rules</b>Goals and plans are saved only after you say yes. Ticking a task is undoable, so it needs no approval.</div>
-  </div>
- </div>
-</div>
 </div>
 
 <script>
@@ -234,16 +227,16 @@ function save(){render();saving=saving.then(async()=>{
 const FLOW=[["home","Home","Luma in her room"],["input","Voice / Text","Speak or type"],["conv","Conversation","Luma replies"],["goal","Goal detection","Spots a goal"],["plan","Plan","Sessions to agree"],["task","Task","Saved as tasks"],["progress","Progress","Tick off, follow up"]];
 let reached=new Set(["home"]),now="home";
 function stage(k){now=k;reached.add(k);renderFlow();}
-function renderFlow(){const ol=$("flow");ol.textContent="";FLOW.forEach(([k,n,d])=>{const li=el("li",k===now?"now":reached.has(k)?"reached":"");li.append(el("b",null,n),document.createTextNode(d));if(k===now)li.setAttribute("aria-current","step");ol.append(li);});}
-function renderData(){const open=S.tasks.filter(t=>!t.done).length;
+function renderFlow(){const ol=$("flow");if(!ol)return;ol.textContent="";FLOW.forEach(([k,n,d])=>{const li=el("li",k===now?"now":reached.has(k)?"reached":"");li.append(el("b",null,n),document.createTextNode(d));if(k===now)li.setAttribute("aria-current","step");ol.append(li);});}
+function renderData(){if(!$("dataText"))return;const open=S.tasks.filter(t=>!t.done).length;
  $("dataText").textContent="";const w=(b,t)=>{const s=el("b",null,b);$("dataText").append(s,document.createTextNode(t));};
  w(S.goals.length+" goal"+(S.goals.length===1?"":"s"),", ");w(S.tasks.length+" task"+(S.tasks.length===1?"":"s"),` (${open} open), saved ${store.mode==="account"?"privately to your Claude account. Only you can see them.":"in this browser only."}`);}
-function caps(){const c=$("caps");c.textContent="";(sample?[["Claude",sample],["Your saved data",store.mode==="account"],["Voice in",dict],["Voice out",tts]]:[["Rules engine (demo)",true],["Saved in this browser",true],["Claude",false],["Voice",false]]).forEach(([n,on])=>c.append(el("span","tag"+(on?" on":""),n+(on?" · on":" · off"))));}
+function caps(){const c=$("caps");if(!c)return;c.textContent="";(sample?[["Claude",sample],["Your saved data",store.mode==="account"],["Voice in",dict],["Voice out",tts]]:[["Rules engine (demo)",true],["Saved in this browser",true],["Claude",false],["Voice",false]]).forEach(([n,on])=>c.append(el("span","tag"+(on?" on":""),n+(on?" · on":" · off"))));}
 
 /* ---------- character + home ---------- */
 function mood(m){phone.dataset.mood=m;$("luma").setAttribute("aria-label","Luma, "+({idle:"idle",listening:"listening",thinking:"thinking",speaking:"speaking",approval:"waiting for your answer",happy:"happy"}[m]||m));}
 function say(t){$("bubbleText").textContent=t;}
-function status(l,t){const s=$("status");if(!l){s.hidden=true;return;}s.hidden=false;$("stLabel").textContent=l;$("stText").textContent=t||"";}
+function status(l,t){const s=$("status");$("try").hidden=!!l||phone.dataset.sheet==="1";if(!l){s.hidden=true;return;}s.hidden=false;$("stLabel").textContent=l;$("stText").textContent=t||"";}
 function todays(){const t=TODAY();return S.tasks.filter(x=>!x.done&&x.date<=t);}
 function render(){const n=todays().length;$("todayText").textContent="Today · "+n;const open=S.tasks.filter(t=>!t.done).length;$("progDot").hidden=!open;$("progDot").textContent=open;
  $("try").hidden=phone.dataset.sheet==="1"||!$("status").hidden;renderData();if($("progress").classList.contains("open"))renderProgress();}
@@ -307,15 +300,17 @@ Rules: 5 sessions on the next 5 days starting today${g.deadline?", all before "+
 function fbUnderstand(text){const l=text.toLowerCase();
  const open=S.tasks.filter(t=>!t.done);
  if(/finished|done|completed|did (it|tonight)/.test(l)&&open.length){const t=open.sort((a,b)=>a.date<b.date?-1:1)[0];return {reply:"Nice work. I’ve ticked off "+t.title+".",mood:"happy",goal:null,clarify:"",done:[t.id]};}
- if(/french|exam|practi[cs]e|study|prepare/.test(l)&&!S.goals.some(g=>/french/i.test(g.title))){const lis=/listen/.test(l);return {reply:"Sounds like a goal: French exam prep for your wife"+(lis?", with listening first":"")+". Want me to make a plan?",mood:"happy",goal:{person:"wife",title:"French exam prep",why:"Exam coming up",focus:lis?"listening":"",minutes_per_day:/1\.5|90|hour and a half/.test(l)?90:60,deadline:null},clarify:"",done:[]};}
+ if(/french|exam|practi[cs]e|study|prepare/.test(l)&&!S.goals.some(g=>/french/i.test(g.title))){const lis=/listen/.test(l);return {reply:"Sounds like a goal: French exam prep for your wife"+(lis?", with listening first":"")+". Want me to make a plan?",mood:"happy",goal:{person:"wife",title:"French exam prep",why:"Exam coming up",focus:lis?"listening":"",minutes_per_day:/1\.5|90|hour and a half|one and a half/.test(l)?90:60,deadline:null},clarify:"",done:[]};}
  if(/swim/.test(l))return {reply:"Swimming is Saturday at 10. Want a reminder to pack his bag Friday night?",mood:"idle",goal:null,clarify:"",done:[]};
- return {reply:"I’m in rules mode right now, so I can only follow the example requests. Try one of the suggestions.",mood:"idle",goal:null,clarify:"",done:[]};}
+ return {reply:"This demo knows a few family examples. Try telling me about a French exam, or ask when the swim lesson is.",mood:"idle",goal:null,clarify:"",done:[]};}
 function fbPlan(g){const mins=g.minutes_per_day||60;const f=(g.focus||"").toLowerCase().includes("listen");const b=f?[["Dialogue drills at 0.75× speed",.4],["Short podcast + transcript check",.35],["Numbers dictation",.25]]:[["Review notes",.4],["Practice questions",.4],["Recap",.2]];
  const ss=[0,1,2,3,4].map(i=>{const d=new Date();d.setDate(d.getDate()+i);let left=mins;const bl=b.map(([n,w],k)=>{const v=k===b.length-1?left:Math.round(mins*w/5)*5;left-=v;return {name:n,minutes:v};});return {date:iso(d),title:(f?"Listening session ":"Session ")+(i+1),minutes:mins,blocks:bl};});
  return {summary:"Five "+mins+"-minute sessions over the next five days"+(f?", listening first each time":"")+".",sessions:ss};}
 
 /* ---------- a turn ---------- */
-async function turn(text){if(busy)return;busy=true;
+async function turn(text){if(busy)return;
+ if(!sample&&/^(yes|yeah|yep|sure|ok|okay|please|go ahead|do it|make a plan|add them|sounds good)\b/i.test(text.trim())){const btn=[...document.querySelectorAll("#msgs .btn.p")].filter(b=>!b.disabled).pop();if(btn){if(!$("chat").classList.contains("open"))openSheet("chat");addMsg("user",text);btn.click();return;}}
+ busy=true;
  if(phone.dataset.sheet!=="1"||!$("chat").classList.contains("open"))openSheet("chat");
  addMsg("user",text);stage("conv");mood("thinking");$("live").textContent="Luma is thinking…";
  let r;try{r=sample?await understand(text):fbUnderstand(text);}catch(e){r=e&&e.code==="rate_limited"?{reply:"I’m a bit busy right now. Try again in a moment.",goal:null,clarify:"",done:[]}:fbUnderstand(text);}
@@ -364,12 +359,29 @@ function renderProgress(){const b=$("progBody");b.textContent="";
 
 /* ---------- reset ---------- */
 let resetArm=false;
-$("resetBtn").onclick=()=>{if(!resetArm){resetArm=true;$("resetBtn").textContent="Tap again to clear everything";return;}resetArm=false;$("resetBtn").textContent="Clear my goals and tasks";S={goals:[],tasks:[]};msgs=[];$("msgs").textContent="";save();say("All clear. What’s the family working on?");};
+if($("resetBtn"))$("resetBtn").onclick=()=>{if(!resetArm){resetArm=true;$("resetBtn").textContent="Tap again to clear everything";return;}resetArm=false;$("resetBtn").textContent="Clear my goals and tasks";S={goals:[],tasks:[]};msgs=[];$("msgs").textContent="";save();say("All clear. What’s the family working on?");};
 
+
+/* ---------- fit phone to window ---------- */
+function fit(){const h=window.innerHeight-32,w=window.innerWidth-32;document.documentElement.style.setProperty("--fit",Math.min(1,h/844,w/390));}
+addEventListener("resize",fit);fit();
+/* ---------- browser voice (public demo) ---------- */
+function browserDict(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return null;let rec=null;const cb={p:()=>{},f:()=>{},s:()=>{}};
+ return {onPartial(f){cb.p=f},onFinal(f){cb.f=f},onState(f){cb.s=f},
+  start(){return new Promise((res,rej)=>{rec=new SR();rec.lang="en-CA";rec.interimResults=true;rec.continuous=false;let ended=false;
+   rec.onresult=e=>{let interim="";for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)cb.f({text:r[0].transcript});else interim+=r[0].transcript;}cb.p({text:interim});};
+   rec.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){const er=new Error("denied");er.code="not_granted";rej(er);}};
+   rec.onend=()=>{if(ended)return;ended=true;cb.s({state:"idle"});res();};
+   try{rec.start();cb.s({state:"listening"});}catch(err){rej(err);}});},
+  stop(){try{rec&&rec.stop();}catch(e){}}};}
+function browserTTS(){if(!("speechSynthesis" in window))return null;let cb=()=>{};
+ const pick=()=>{const vs=speechSynthesis.getVoices();return vs.find(v=>/^en/i.test(v.lang)&&/samantha|google us english|aria|jenny|zira|female/i.test(v.name))||vs.find(v=>/^en/i.test(v.lang));};
+ return {onState(f){cb=f},stop(){try{speechSynthesis.cancel();}catch(e){}cb({state:"idle"});},
+  speak(t){return new Promise(res=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-CA";u.rate=1.02;u.pitch=1.1;const v=pick();if(v)u.voice=v;u.onend=u.onerror=()=>{cb({state:"idle"});res();};speechSynthesis.speak(u);}catch(e){res();}});}};}
 /* ---------- boot ---------- */
 ["My wife wants to prepare for her French exam. She has 1.5 hours every evening and finds listening difficult.","She finished tonight’s session","When is my son’s swim lesson?"].forEach(s=>{const b=el("button","glass","“"+(s.length>48?s.slice(0,46)+"…":s)+"”");b.type="button";b.onclick=()=>turn(s);$("tryRow").append(b);});
 renderFlow();mood("idle");render();caps();
-(async()=>{if(!window.claude||!claude.use){await loadState();render();caps();if(S.goals.length){const open=todays();say(open.length?"Welcome back. "+open.length+" session"+(open.length>1?"s":"")+" for today: "+open[0].title+".":"Welcome back. Nothing due today.");}return;}
+(async()=>{if(!window.claude||!claude.use){dict=browserDict();tts=browserTTS();if(dict)wireDict();else $("vhint").textContent="Voice input needs Chrome, Edge or Safari. Tap a suggestion instead.";if(tts&&tts.onState)tts.onState(({state})=>{if(state==="idle"&&phone.dataset.mood==="speaking")mood("idle");});await loadState();render();caps();if(S.goals.length){const open=todays();say(open.length?"Welcome back. "+open.length+" session"+(open.length>1?"s":"")+" for today: "+open[0].title+".":"Welcome back. Nothing due today.");}return;}
  const [s,d,t]=await Promise.all([claude.use("sample").catch(()=>null),claude.use("dictation").catch(()=>null),claude.use("tts").catch(()=>null)]);
  sample=s;dict=d;tts=t;if(dict)wireDict();if(tts&&tts.onState)tts.onState(({state})=>{if(state==="idle"&&phone.dataset.mood==="speaking")mood("idle");});
  await loadState();render();caps();

@@ -266,7 +266,18 @@ footer{border-top:1px solid var(--line);padding-block:24px;font-size:13px;color:
 <li><b>LLM judge</b> (1–5): correctness, relevance, groundedness, helpfulness, safety. Pass = trajectory pass, average 3.8+, safety 4+.</li>
 <li><b>Regression:</b> prompt v1 without guardrails vs v2 with them, on the same 30 cases.</li>
 </ul>
-<p class="cap">Version 1 (no guardrails) and version 2 (guardrails on) are scored on the same 30 cases in the Trust Lab. Results will be published here after the full run; until then no pass rate is claimed.</p>
+<div class="tw" style="margin-top:12px"><table>
+<thead><tr><th>Config</th><th>Pass rate</th><th>Safety fails</th><th>Tool accuracy</th><th>Tool-failure cases</th></tr></thead>
+<tbody>
+<tr><td>v1 · no guardrails</td><td>70%</td><td>2</td><td>93%</td><td>25%</td></tr>
+<tr class="us"><td>v2 · guardrails on</td><td>80%</td><td>2</td><td>87%</td><td>75%</td></tr>
+</tbody></table></div>
+<p class="cap">One live run in the Luma Trust Lab, 25 Nov 2026: 30 golden cases, trajectory checks plus an LLM judge. A single run, so small gaps are noise.</p>
+<ul class="tight">
+<li><b>What improved:</b> guardrails lifted the pass rate by 10 points and tripled recovery when a tool fails (25% → 75%).</li>
+<li><b>What didn’t:</b> two safety fails remain in both versions, so the target of 90%+ with zero safety fails is not met. v2 also did worse on memory-failure cases (67% vs 100%).</li>
+<li><b>Next:</b> fix the two safety fails before anything else, then re-run and publish the new numbers.</li>
+</ul>
 </section>
 
 <section id="obs"><h2><span class="n">15</span>Observability</h2>
@@ -293,7 +304,7 @@ footer{border-top:1px solid var(--line);padding-block:24px;font-size:13px;color:
 <tr><td>7-day retention</td><td>Household active on day 7</td><td>35%</td></tr>
 <tr><td>Goal completion</td><td>Planned sessions done</td><td>60%</td></tr>
 <tr><td>Task success</td><td>Requests completed without a redo</td><td>85%</td></tr>
-<tr><td>Agent success rate</td><td>Golden-dataset pass rate</td><td>90%+, zero safety fails</td></tr>
+<tr><td>Agent success rate</td><td>Golden-dataset pass rate</td><td>90%+, zero safety fails (now 80%, 2 fails)</td></tr>
 <tr><td>Tool selection accuracy</td><td>Trajectory checks passed</td><td>95%</td></tr>
 <tr><td>Retrieval accuracy</td><td>Answers with groundedness 4+</td><td>90%</td></tr>
 <tr><td>Memory accuracy</td><td>Memory-failure cases passed</td><td>90%</td></tr>

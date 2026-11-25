@@ -1030,7 +1030,9 @@ function twinMarkdown(text) {
 /** The notes Viki actually used, as chips under the answer. */
 function twinRender(bubble, answer, sources) {
   bubble.innerHTML = twinMarkdown(answer);
-  if (!sources || !sources.length) return;
+  // Source chips are hidden on the portfolio for a clean reply.
+  const SHOW_SOURCES = false;
+  if (!SHOW_SOURCES || !sources || !sources.length) return;
 
   const wrap = document.createElement('div');
   wrap.className = 'twin-srcs';

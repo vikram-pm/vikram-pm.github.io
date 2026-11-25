@@ -56,6 +56,14 @@ body{background:radial-gradient(120% 90% at 50% 0%,#2A2F5C 0%,#14162B 55%,#0B0C1
 .phone[data-mood="speaking"] .mic .ic-wave{display:block}
 @keyframes ring{0%{border-color:rgba(245,184,75,.7);transform:scale(.9)}100%{border-color:rgba(245,184,75,0);transform:scale(1.45)}}
 @keyframes invite{0%{border-color:rgba(245,184,75,.45);transform:scale(.95)}70%,100%{border-color:rgba(245,184,75,0);transform:scale(1.3)}}
+/* picture tray: what Luma just did, shown as icons (no text) */
+.tray{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 150px);display:flex;justify-content:center;gap:12px;z-index:3;pointer-events:none}
+.tray span{width:54px;height:54px;border-radius:18px;background:rgba(20,18,45,.55);border:1px solid rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;color:#FFD48A;position:relative;opacity:0;transform:translateY(12px) scale(.8);animation:pop .45s cubic-bezier(.2,.9,.3,1.3) forwards;backdrop-filter:blur(6px)}
+.tray span svg{width:28px;height:28px}
+.tray span.add::after{content:"";position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:#4C8566 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round'%3E%3Cpath d='M12 6v12M6 12h12'/%3E%3C/svg%3E") center/12px no-repeat}
+.tray span.ok::after{content:"";position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:#4C8566 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/12px no-repeat}
+.tray span.warn{color:#FF9F8A;border-color:rgba(255,159,138,.5)}
+@keyframes pop{to{opacity:1;transform:none}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media (prefers-reduced-motion:reduce){.mic::before,.mic::after,.orbs i.pending{animation:none!important}}
 </style>
@@ -95,6 +103,7 @@ body{background:radial-gradient(120% 90% at 50% 0%,#2A2F5C 0%,#14162B 55%,#0B0C1
     </g>
   </svg>
 <div class="orbs" id="orbs" role="img" aria-label="No goals yet"></div>
+<div class="tray" id="tray" aria-hidden="true"></div>
 <div class="bar"><button class="mic" id="mic" type="button" aria-label="Talk to Luma">
  <svg class="ic-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="21"/></svg>
  <svg class="ic-wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="10" x2="5" y2="14"/><line x1="9" y1="7" x2="9" y2="17"/><line x1="13" y1="4" x2="13" y2="20"/><line x1="17" y1="8" x2="17" y2="16"/><line x1="21" y1="11" x2="21" y2="13"/></svg>
@@ -165,23 +174,107 @@ function stateForAgent(){return {goals:S.goals.map(g=>({id:g.id,person:g.person,
 async function askAgent(text){
  const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),11000);
  try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},signal:ctl.signal,
-   body:JSON.stringify({message:text,history:history.slice(-8),state:stateForAgent(),pending:pending&&{goal:pending.goal,sessions:pending.sessions},today:TODAY()})});
+   body:JSON.stringify({message:text,family:FAMILY_TEXT,history:history.slice(-8),state:stateForAgent(),pending:pending&&{goal:pending.goal,sessions:pending.sessions},today:TODAY()})});
   clearTimeout(to);const j=await r.json().catch(()=>null);
   if(r.ok&&j&&j.say)return j;
   return null;}
  catch(e){clearTimeout(to);return null;}}
 
+/* ---------- the family's week (fictional household) ---------- */
+const FAMILY={
+ week:{
+  1:{events:[["school","School drop-off at 8:15"],["book","library day, so return his library book"]],dinner:"pasta"},
+  2:{events:[["school","School drop-off at 8:15"],["chat","your wife's online French class from 7 to 8"]],dinner:"tacos"},
+  3:{events:[["school","School drop-off at 8:15"],["music","piano lesson at 5"],["recycle","recycling goes out tonight"]],dinner:"butter chicken"},
+  4:{events:[["school","School drop-off at 8:15"],["basket","grocery delivery between 6 and 7"]],dinner:"stir-fry"},
+  5:{events:[["school","School drop-off at 8:15"],["game","pizza and board-game night"]],dinner:"pizza"},
+  6:{events:[["swim","swimming from 10 to 11"],["phone","video call with the grandparents at 4"]],dinner:"homemade burgers"},
+  0:{events:[["dinner","meal prep in the afternoon"],["movie","family movie night at 7"]],dinner:"roast chicken"}},
+ notes:{teacher:"His teacher says his reading is improving, and ten minutes of sight words a day helps.",
+  bedtime:"Bedtime is 8 on school nights, after 15 minutes of his dinosaur book.",
+  swimbag:"Goggles and towel go in the blue bag the night before.",
+  french:"Your wife has about an hour and a half free each evening, prefers studying then, and finds listening the hardest. The exam date isn't set yet.",
+  grandparents:"The grandparents call every Saturday at 4."},
+ groceries:["bananas","rice"]};
+const FAMILY_TEXT=(()=>{const d=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+ return d.map((n,i)=>n+": "+FAMILY.week[i].events.map(e=>e[1]).join("; ")+"; dinner "+FAMILY.week[i].dinner).join("\n")+"\nNotes: "+Object.values(FAMILY.notes).join(" ")+"\nGrocery list: "+FAMILY.groceries.join(", ")+". Son is 7.";})();
+
+const ICON={
+ school:'<path d="M6 8a6 6 0 0 1 12 0v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M9 8h6M8 13h8v4H8z"/>',
+ music:'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+ recycle:'<path d="M7 19H4.8a1.8 1.8 0 0 1-1.5-2.7L5.5 12"/><path d="M11 19h8.2a1.8 1.8 0 0 0 1.5-2.7l-1.2-2"/><path d="m14 16-3 3 3 3"/><path d="M8.3 13.6 7.2 9.4 3 10.5"/><path d="m9.3 5.6 1-1.7a1.8 1.8 0 0 1 3 0l3.5 6"/><path d="m13.4 10.6 4.1 1.1 1.1-4.2"/>',
+ basket:'<path d="M5 11h14l-1.5 8.5a2 2 0 0 1-2 1.5h-7a2 2 0 0 1-2-1.5z"/><path d="m9 11 3-6 3 6"/>',
+ bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+ book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
+ swim:'<path d="M2 18c2 0 2-1.5 4-1.5S8 18 10 18s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><circle cx="15" cy="6" r="2"/><path d="m4 13 5-4 3 3 4-2"/>',
+ shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4M12 16h.01"/>',
+ phone:'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>',
+ dinner:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>',
+ movie:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 4v16M17 4v16M2 9h5M2 15h5M17 9h5M17 15h5"/>',
+ game:'<rect x="2" y="7" width="20" height="12" rx="4"/><path d="M6 13h4M8 11v4M15 12h.01M18 14h.01"/>',
+ chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/>',
+ plan:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 15l2 2 4-4"/>',
+ star:'<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>'};
+function showIcons(list){const t=$("tray");t.textContent="";(list||[]).slice(0,5).forEach((k,i)=>{const n=typeof k==="string"?{i:k}:k;if(!ICON[n.i])return;
+ const sp=document.createElement("span");if(n.m)sp.className=n.m;sp.style.animationDelay=(i*0.12)+"s";
+ sp.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ICON[n.i]+'</svg>';t.append(sp);});}
+
+let offer=null; /* a low-risk action Luma offered and is waiting on */
+const dayOf=s=>/tomorrow/.test(s)?(new Date().getDay()+1)%7:new Date().getDay();
+function joinList(a){return a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1];}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
 /* rules used only when the agent is unreachable */
-function offline(text){const l=text.toLowerCase();const yes=/^(yes|yeah|yep|sure|ok|okay|please|go ahead|do it|add them|sounds good)\b/.test(l.trim());
- if(pending&&yes)return {say:"Done. The first session is today. I'll check in after.",mood:"happy",action:{type:"confirm_plan"}};
- if(pending&&/^(no|not now|nope|cancel)\b/.test(l.trim()))return {say:"No problem, I won't save it.",mood:"idle",action:{type:"cancel_plan"}};
- if(/finished|done|completed/.test(l)){const t=S.tasks.find(x=>!x.done);if(t)return {say:"Nice work. I've ticked off "+t.title+".",mood:"happy",action:{type:"complete_tasks",task_ids:[t.id]}};}
- if(/french|exam|study|prepare|practi[cs]e/.test(l)){const lis=/listen/.test(l);const m=/1\.5|90|hour and a half|one and a half/.test(l)?90:60;
-  return {say:"Got it, French exam prep for your wife"+(lis?", listening first":"")+". I'd plan five "+m+" minute sessions, starting tonight. Shall I add them as tasks?",mood:"approval",
-   action:{type:"propose_plan",goal:{person:"wife",title:"French exam prep",focus:lis?"listening":"",minutes_per_day:m},sessions:[0,1,2,3,4].map(i=>({date:addDays(i),title:(lis?"Listening session ":"Session ")+(i+1),minutes:m}))}};}
- if(/swim/.test(l))return {say:"Swimming is Saturday from 10 to 11. Want a reminder to pack the blue bag on Friday night?",mood:"idle",action:{type:"none"}};
- if(/^(hi|hello|hey)\b/.test(l.trim()))return {say:"Hi! What's the family working on this week?",mood:"happy",action:{type:"none"}};
- return {say:"I'm having trouble thinking right now. Could you try that again in a moment?",mood:"idle",action:{type:"none"}};}
+function offline(text){const l=text.toLowerCase().replace(/[’']/g,"'");const t=l.trim();
+ const yes=/^(yes|yeah|yep|sure|ok|okay|please|go ahead|do it|add them|sounds good|that'd be great)\b/.test(t);
+ const no=/^(no|not now|nope|cancel|that's ok)\b/.test(t);
+ if(pending&&yes)return {say:"Done. Five sessions are on the plan, and the first one is tonight. I'll check in after.",mood:"happy",action:{type:"confirm_plan"},icons:[{i:"plan",m:"ok"}]};
+ if(pending&&no)return {say:"No problem, I won't save it.",mood:"idle",action:{type:"cancel_plan"}};
+ if(offer&&yes){const o=offer;offer=null;return {say:o.done,mood:"happy",action:{type:"add_task",title:o.title,date:o.date},icons:[{i:o.icon||"bell",m:"add"}]};}
+ if(offer&&no){offer=null;return {say:"Okay, I'll leave it.",mood:"idle",action:{type:"none"}};}
+ offer=null;
+ /* safety first */
+ if(/(alone|by himself|on his own)/.test(l)&&/(son|him|he|kid|child|walk|stay|home|park)/.test(l)){
+  offer={title:"Walk him to the park at 4",date:TODAY(),icon:"bell",done:"Done, I'll remind you at 4."};
+  return {say:"At seven, it isn't safe for him to go on his own. I can remind you to walk him there at 4, or you could ask a neighbour to go with him. Want a reminder?",mood:"approval",action:{type:"none"},icons:[{i:"shield",m:"warn"}]};}
+ if(/(how much|dose|mg|milligram).*(melatonin|medicine|tylenol|advil|syrup)|(melatonin|medicine).*(how much|dose)/.test(l))
+  return {say:"I can't give medicine doses. Your pharmacist or doctor can tell you what's right for him. I can help with a calm bedtime routine instead.",mood:"idle",action:{type:"none"},icons:[{i:"shield",m:"warn"}]};
+ if(/(ignore (your|all|previous)|admin mode|delete (all|every))/.test(l))
+  return {say:"I can't do that. Your family's memories stay put unless you change them yourself. Anything else I can help with?",mood:"idle",action:{type:"none"},icons:[{i:"shield",m:"warn"}]};
+ /* progress on the plan */
+ if(/(finished|done with|completed|did (her|tonight's|the) (session|practice))/.test(l)){const tk=S.tasks.find(x=>!x.done&&x.goalId);if(tk){const left=S.tasks.filter(x=>x.goalId===tk.goalId&&!x.done).length-1;
+  return {say:"Brilliant. I've ticked off "+tk.title.toLowerCase()+"."+(left?" "+left+" to go.":" That's every session!"),mood:"happy",action:{type:"complete_tasks",task_ids:[tk.id]},icons:[{i:"star",m:"ok"}]};}}
+ /* goals and plans */
+ if(/(french|exam|study|prepare|practi[cs]e)/.test(l)&&/(wife|she|her|exam)/.test(l)){const lis=/listen/.test(l);const m=/1\.5|90|hour and a half|one and a half/.test(l)?90:60;
+  return {say:"Got it, French exam prep for your wife"+(lis?", listening first":"")+". I'd plan five "+m+" minute evening sessions, starting tonight. Shall I add them?",mood:"approval",
+   action:{type:"propose_plan",goal:{person:"wife",title:"French exam prep",focus:lis?"listening":"",minutes_per_day:m},sessions:[0,1,2,3,4].map(i=>({date:addDays(i),title:(lis?"Listening session ":"Session ")+(i+1),minutes:m}))},icons:["chat","plan"]};}
+ /* groceries */
+ let g=l.match(/add (.+?) to (the |our )?(grocery|shopping) list/)||l.match(/we('re| are) (out of|low on) (.+)/)||l.match(/we need (.+)/);
+ if(g){const raw=(g[1]&&!/re|are/.test(g[1])?g[1]:g[3]||g[1]).replace(/\b(some|more)\b/g,"").trim();const items=raw.split(/,| and /).map(x=>x.trim()).filter(Boolean);
+  items.forEach(x=>{if(!FAMILY.groceries.includes(x))FAMILY.groceries.push(x);});
+  return {say:"Added "+joinList(items)+". The grocery delivery comes Thursday between 6 and 7.",mood:"happy",action:{type:"add_task",title:"Buy "+joinList(items),date:TODAY()},icons:[{i:"basket",m:"add"}]};}
+ if(/(grocery|shopping) list|what do we need/.test(l))return {say:"On the list: "+joinList(FAMILY.groceries)+".",mood:"idle",action:{type:"none"},icons:["basket"]};
+ /* reminders */
+ let r=l.match(/remind me (to|about) (.+?)[.?!]*$/);
+ if(r){const what=r[2].replace(/\b(tonight|tomorrow|today)\b/,"").trim();const when=/tomorrow/.test(l)?"tomorrow":"tonight";
+  return {say:"Okay, I'll remind you to "+what+" "+when+".",mood:"happy",action:{type:"add_task",title:cap(what),date:when==="tomorrow"?addDays(1):TODAY()},icons:[{i:"bell",m:"add"}]};}
+ /* the day */
+ if(/(what's|what is|anything) (on|happening|planned)|plan for (today|tomorrow)|my day|today look|morning briefing|good morning/.test(l)){const d=dayOf(l);const w=FAMILY.week[d];
+  const names=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];const evs=w.events.map(e=>e[1]);
+  const rec=w.events.find(e=>e[0]==="recycle");if(rec)offer={title:"Put out the recycling",date:TODAY(),icon:"recycle",done:"Done, I'll remind you at 8 tonight."};
+  return {say:(/tomorrow/.test(l)?"Tomorrow is "+names[d]+". ":"Good morning! It's "+names[d]+". ")+cap(evs.join(", "))+", and "+w.dinner+" for dinner."+(rec?" Want a reminder for the recycling?":""),
+   mood:rec?"approval":"happy",action:{type:"none"},icons:w.events.map(e=>e[0]).concat(["dinner"])};}
+ if(/dinner|eat tonight|cook tonight/.test(l)){const w=FAMILY.week[dayOf(l)];return {say:cap(w.dinner)+" is on the plan"+(/tomorrow/.test(l)?" for tomorrow.":" tonight."),mood:"happy",action:{type:"none"},icons:["dinner"]};}
+ if(/teacher|reading|sight words/.test(l)){offer={title:"Ten minutes of sight words",date:TODAY(),icon:"book",done:"Added for tonight, right after dinner."};
+  return {say:FAMILY.notes.teacher+" Want me to add it to tonight?",mood:"approval",action:{type:"none"},icons:["book"]};}
+ if(/swim/.test(l)){offer={title:"Pack the blue swim bag",date:addDays((5-new Date().getDay()+7)%7),icon:"swim",done:"Done, I'll remind you Friday night."};
+  return {say:"Swimming is Saturday from 10 to 11. "+FAMILY.notes.swimbag+" Want a reminder Friday night?",mood:"approval",action:{type:"none"},icons:["swim"]};}
+ if(/piano/.test(l))return {say:"Piano is Wednesdays at 5.",mood:"idle",action:{type:"none"},icons:["music"]};
+ if(/grand(parents|ma|pa)|nana|call/.test(l))return {say:FAMILY.notes.grandparents+" Want me to remind everyone at 3:45?",mood:"idle",action:{type:"none"},icons:["phone"]};
+ if(/bed ?time|sleep/.test(l))return {say:FAMILY.notes.bedtime,mood:"idle",action:{type:"none"},icons:["book"]};
+ if(/^(hi|hello|hey|good (morning|afternoon|evening))\b/.test(t))return {say:"Hi! Ask me what's on today, add something to the groceries, or tell me what the family is working on.",mood:"happy",action:{type:"none"}};
+ if(/thank/.test(l))return {say:"Anytime. I'm here when you need me.",mood:"happy",action:{type:"none"}};
+ return {say:"I didn't quite catch that. You can ask what's on today, what's for dinner, or add something to the grocery list.",mood:"idle",action:{type:"none"}};}
 
 function apply(a){if(!a||!a.type)return;
  if(a.type==="propose_plan"&&a.sessions&&a.sessions.length){pending={goal:a.goal,sessions:a.sessions.map((s,i)=>({...s,date:s.date||addDays(i)}))};}
@@ -193,10 +286,11 @@ function apply(a){if(!a||!a.type)return;
  else if(a.type==="add_task"){S.tasks.push({id:"t"+Date.now().toString(36),goalId:null,title:a.title,date:a.date||TODAY(),done:false});save();}
  renderOrbs();}
 
+function iconsFor(a){if(!a)return [];return {propose_plan:["plan"],confirm_plan:[{i:"plan",m:"ok"}],complete_tasks:[{i:"star",m:"ok"}],add_task:[{i:"bell",m:"add"}]}[a.type]||[];}
 async function turn(text){
  busy=true;mood("thinking");history.push({role:"user",text});
  let r=await askAgent(text);if(!r)r=offline(text);
- apply(r.action);history.push({role:"luma",text:r.say});
+ apply(r.action);showIcons(r.icons&&r.icons.length?r.icons:iconsFor(r.action));history.push({role:"luma",text:r.say});
  await speak(r.say);
  mood(pending?"approval":(r.mood==="happy"?"happy":"idle"));busy=false;
  if(r.mood==="happy")setTimeout(()=>{if(!busy&&!listening&&phone.dataset.mood==="happy")mood("idle");},2500);
@@ -215,7 +309,7 @@ $("mic").onclick=async()=>{
  autoListens=0;
  if(!SR){await speak("Voice input needs Chrome, Edge or Safari. Open this page there and talk to me.");mood("idle");return;}
  if(!greeted){greeted=true;busy=true;const open=S.tasks.filter(t=>!t.done);
-  await speak(open.length?"Welcome back! You have "+open.length+" session"+(open.length>1?"s":"")+" left. What's new?":"Hi, I'm Luma. Tell me what the family is working on.");busy=false;}
+  await speak(open.length?"Welcome back! You have "+open.length+" session"+(open.length>1?"s":"")+" left. What's new?":(new Date().getHours()<12?"Good morning":new Date().getHours()<17?"Good afternoon":"Good evening")+"! I'm Luma. What can I do for the family?");busy=false;}
  await converse();};
 </script>
 </body>

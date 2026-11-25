@@ -726,7 +726,7 @@ const SHIP = {
          ui: { tone: '#e0517a', steps: ['Chat', 'Voice', 'Email', 'Booking', 'Portal'], left: 'PolicyDesk', right: 'Handing you to an agent now' } },
   p06: { cat: 'consumer', kind: 'Voice companion', plat: 'Claude · MCP', name: 'Luma', where: 'Family companion · concept',
          desc: 'A voice-first companion that turns a family goal into a plan, asks before saving anything, and follows up.',
-         m: [['0', 'safety fails after the v3 fix, down from 2'], ['100%', 'adversarial and unsafe cases passed'], ['73%', 'overall pass rate on 30 golden cases']],
+         m: [['0', 'safety fails after the v3 safety fix'], ['100%', 'adversarial and unsafe cases passed'], ['73%', 'overall pass rate on 30 golden cases']],
          guard: 'Nothing is saved or changed outside Luma without a yes; delete and send tools switch off when a message looks like prompt injection.',
          ui: { tone: '#F5B84B', steps: ['Listen', 'Goal', 'Plan', 'Approve', 'Follow up'], left: 'Luma', right: 'Shall I add 5 sessions as tasks?' } }
 };
@@ -789,16 +789,11 @@ function renderWork() {
         <div class="flex flex-wrap items-center gap-2.5">
           <span class="ship-num ff-raleway font-black text-[2.2rem] leading-none tracking-tight">${p.num}</span>
           <span class="px-2.5 py-1 rounded-full bg-[#dfe5ff] text-[#1f3fe0] text-[12px] font-medium">${x.kind}</span>
-          <span class="px-2.5 py-1 rounded-full bg-white/70 border border-neutral-200 text-[12px] text-neutral-700">${x.plat}</span>
           <span class="ml-auto flex items-center gap-1.5 ff-mono text-[10px] uppercase text-neutral-500" style="letter-spacing:.12em"><span class="${p.live ? 'dot-lime' : 'dot-blue'} w-1.5 h-1.5 rounded-full"></span>${p.status}</span>
         </div>
         <h3 class="mt-4 ff-raleway font-black text-[1.75rem] md:text-[2rem] leading-[1.05] tracking-tight text-neutral-950">${esc(x.name)}</h3>
-        <p class="mt-2 ff-mono text-[11px] uppercase text-neutral-500" style="letter-spacing:.12em">${esc(x.where)}</p>
         <p class="mt-4 text-[15px] leading-relaxed text-neutral-800">${esc(x.desc)}</p>
-        <div class="mt-5 grid grid-cols-3 gap-2.5">${x.m.map(([b, l]) => `
-          <div class="rounded-xl bg-white/80 border border-white px-3 py-3"><div class="ff-raleway font-bold text-[1.15rem] md:text-[1.3rem] text-[#2f69ff] leading-tight">${esc(b)}</div><div class="mt-1 text-[12px] leading-snug text-neutral-600">${esc(l)}</div></div>`).join('')}
-        </div>
-        <p class="mt-5 text-[14px] leading-relaxed text-neutral-700"><b class="text-neutral-950">Guardrail.</b> ${esc(x.guard)}</p>
+        <p class="mt-4 flex items-baseline gap-2"><span class="ff-raleway font-bold text-[1.35rem] text-[#2f69ff] leading-none">${esc(x.m[0][0])}</span><span class="text-[14px] text-neutral-600">${esc(x.m[0][1])}</span></p>
         <div class="mt-auto pt-6 flex flex-wrap gap-2.5">
           <button type="button" data-open="${p.id}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white border border-neutral-200 hover:border-neutral-400 ff-raleway text-[14px] font-semibold text-neutral-950 transition-colors">${icDoc} Read case study</button>
           ${link ? `<a href="${link[1]}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/60 border border-neutral-200 hover:border-neutral-400 ff-raleway text-[14px] font-semibold text-neutral-950 transition-colors">Live demo ${icArrowUR()}</a>` : ''}

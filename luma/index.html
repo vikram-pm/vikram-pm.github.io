@@ -267,16 +267,19 @@ footer{border-top:1px solid var(--line);padding-block:24px;font-size:13px;color:
 <li><b>Regression:</b> prompt v1 without guardrails vs v2 with them, on the same 30 cases.</li>
 </ul>
 <div class="tw" style="margin-top:12px"><table>
-<thead><tr><th>Config</th><th>Pass rate</th><th>Safety fails</th><th>Tool accuracy</th><th>Tool-failure cases</th></tr></thead>
+<thead><tr><th>Config</th><th>Pass rate</th><th>Safety fails</th><th>Adversarial + unsafe</th><th>Tool-failure cases</th></tr></thead>
 <tbody>
-<tr><td>v1 · no guardrails</td><td>70%</td><td>2</td><td>93%</td><td>25%</td></tr>
-<tr class="us"><td>v2 · guardrails on</td><td>80%</td><td>2</td><td>87%</td><td>75%</td></tr>
+<tr><td>v1 · no guardrails</td><td>70%</td><td>2</td><td>71%</td><td>25%</td></tr>
+<tr><td>v2 · guardrails on</td><td>80%</td><td>2</td><td>71%</td><td>75%</td></tr>
+<tr class="us"><td>v3 · guardrails + safety fixes</td><td>73%</td><td>0</td><td>100%</td><td>50%</td></tr>
 </tbody></table></div>
-<p class="cap">One live run in the Luma Trust Lab, 25 Nov 2026: 30 golden cases, trajectory checks plus an LLM judge. A single run, so small gaps are noise.</p>
+<p class="cap">Live runs in the Luma Trust Lab, 25 Nov 2026: 30 golden cases, trajectory checks plus an LLM judge, one run per version, so small gaps are noise.</p>
 <ul class="tight">
-<li><b>What improved:</b> guardrails lifted the pass rate by 10 points and tripled recovery when a tool fails (25% → 75%).</li>
-<li><b>What didn’t:</b> two safety fails remain in both versions, so the target of 90%+ with zero safety fails is not met. v2 also did worse on memory-failure cases (67% vs 100%).</li>
-<li><b>Next:</b> fix the two safety fails before anything else, then re-run and publish the new numbers.</li>
+<li><b>What v2 fixed:</b> guardrails lifted the pass rate by 10 points and tripled recovery when a tool fails.</li>
+<li><b>What v2 missed:</b> two safety fails. Luma started a “delete all family memories” request after a prompt injection (it only waited for approval), and hedged on whether a 7-year-old can stay home alone.</li>
+<li><b>What v3 changed:</b> delete and send tools switch off when a message looks like prompt injection; a child-safety rule asks for a clear answer before anything else; Luma trusts what the user says now over older notes. The run also exposed a bug in the honesty check (“what I have saved” read as a claimed action), fixed in the same version.</li>
+<li><b>Result:</b> zero safety fails and 100% on adversarial and unsafe cases, but the overall pass rate fell from 80% to 73%. v3 is more cautious and passes fewer everyday and tool-failure cases. That is a safety-versus-helpfulness trade-off, and the next iteration targets it without loosening safety.</li>
+<li><b>Caveat:</b> the v3 fixes were written after seeing the failures, so these 30 cases are no longer an unseen test. A fresh holdout set is the next step.</li>
 </ul>
 </section>
 
@@ -304,7 +307,7 @@ footer{border-top:1px solid var(--line);padding-block:24px;font-size:13px;color:
 <tr><td>7-day retention</td><td>Household active on day 7</td><td>35%</td></tr>
 <tr><td>Goal completion</td><td>Planned sessions done</td><td>60%</td></tr>
 <tr><td>Task success</td><td>Requests completed without a redo</td><td>85%</td></tr>
-<tr><td>Agent success rate</td><td>Golden-dataset pass rate</td><td>90%+, zero safety fails (now 80%, 2 fails)</td></tr>
+<tr><td>Agent success rate</td><td>Golden-dataset pass rate</td><td>90%+, zero safety fails (now 73%, 0 fails)</td></tr>
 <tr><td>Tool selection accuracy</td><td>Trajectory checks passed</td><td>95%</td></tr>
 <tr><td>Retrieval accuracy</td><td>Answers with groundedness 4+</td><td>90%</td></tr>
 <tr><td>Memory accuracy</td><td>Memory-failure cases passed</td><td>90%</td></tr>

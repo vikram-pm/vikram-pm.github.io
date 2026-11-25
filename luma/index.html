@@ -1,0 +1,340 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Luma · AI Product Case Study · Vikram Seenivasan</title><meta name="description" content="Luma: a voice-first family companion that listens, plans and asks before it acts. AI product case study by Vikram Seenivasan.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* layout: dark night-room hero, then a reading column with a sticky section index on wide screens */
+:root{--bg:#F7F6FB;--surface:#FFFFFF;--tint:#F1EFF8;--line:#E2DEF0;--ink:#1B1730;--muted:#55516A;--ground:#2E3260;--ground-deep:#1C2150;--lamp:#F5B84B;--lamp-ink:#7A4E00;--cream:#F6E7CF;--agent:#3F44C9;--agent-bg:#EEEFFC;--ok:#0B6157;--ok-bg:#D9F1EE;--warn:#8A4A06;--warn-bg:#FCEBD6;--bad:#A3283F;--bad-bg:#F9E1E6;--display:"Space Grotesk",Inter,system-ui,sans-serif;--sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11121B;--surface:#1A1C2B;--tint:#22233A;--line:#34324E;--ink:#EEECF6;--muted:#ACA9C0;--lamp-ink:#F5C46A;--agent:#9EA2FF;--agent-bg:#23264A;--ok:#7FD8CB;--ok-bg:#12312D;--warn:#F3C27A;--warn-bg:#3A2A12;--bad:#F2A7B5;--bad-bg:#3A1A24;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11121B;--surface:#1A1C2B;--tint:#22233A;--line:#34324E;--ink:#EEECF6;--muted:#ACA9C0;--lamp-ink:#F5C46A;--agent:#9EA2FF;--agent-bg:#23264A;--ok:#7FD8CB;--ok-bg:#12312D;--warn:#F3C27A;--warn-bg:#3A2A12;--bad:#F2A7B5;--bad-bg:#3A1A24;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans);margin:0}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
+a{color:var(--agent);text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--agent);outline-offset:2px}
+.hero{background:var(--ground);color:#fff}
+.hero-in{max-width:1120px;margin:0 auto;padding-block:56px 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:32px;align-items:end}
+@media (max-width:760px){.hero-in{grid-template-columns:1fr;padding-top:40px}.hero-luma{width:180px!important;justify-self:center}}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lamp)}
+.hero h1{font-size:clamp(44px,8vw,84px);line-height:.95;letter-spacing:-.02em;margin:10px 0 14px}
+.hero p.lead{font-size:20px;line-height:1.5;color:#E4E4F2;max-width:30ch;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin:24px 0 40px;font-size:14px;color:#C9CADF}
+.meta b{color:#fff;font-weight:600}
+.hero-luma{width:280px;height:auto;display:block}
+.ex{display:none}.hero .ex-happy{display:inline}
+@media (prefers-reduced-motion:no-preference){
+ .body{animation:breathe 4s ease-in-out infinite;transform-origin:195px 652px}
+ .orb{animation:pulse 2.4s ease-in-out infinite}
+ .phone[data-mood="listening"] .orb{animation-duration:.9s}
+ .phone[data-mood="thinking"] .orb{animation-duration:1.4s}
+ .blink{animation:blink 5s infinite;transform-origin:195px 555px}
+ .talk{animation:talk .28s ease-in-out infinite alternate;transform-origin:195px 588px}
+ .think-dots circle{animation:dot 1.2s infinite} .think-dots circle:nth-child(2){animation-delay:.2s} .think-dots circle:nth-child(3){animation-delay:.4s}
+ .arc{animation:arc 1.2s ease-in-out infinite}
+}
+@keyframes breathe{50%{transform:translateY(-4px) scaleY(1.015)}}
+@keyframes pulse{50%{opacity:.35}}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes talk{from{transform:scaleY(.35)}to{transform:scaleY(1.15)}}
+@keyframes dot{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes arc{50%{opacity:.25}}
+.wrap{max-width:1120px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px}
+@media (max-width:900px){.wrap{grid-template-columns:1fr;gap:0}nav.toc{display:none}}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;font-size:13px;line-height:1.4}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px;counter-reset:t}
+nav.toc a{display:block;padding:4px 8px;border-radius:8px;color:var(--muted);text-decoration:none}
+nav.toc a:hover{background:var(--tint);color:var(--ink)}
+main{min-width:0}
+section{padding-block:28px;border-top:1px solid var(--line)}
+section:first-child{border-top:0;padding-top:0}
+section h2{font-size:26px;line-height:1.2;margin-bottom:12px;display:flex;gap:12px;align-items:baseline}
+section h2 .n{font-size:14px;color:var(--lamp-ink);font-variant-numeric:tabular-nums;min-width:22px}
+section>p{max-width:68ch;margin:0 0 14px}
+.tw{overflow-x:auto;margin:6px 0 4px}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.5}
+th,td{text-align:left;padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);border-top:0}
+td:first-child{font-weight:600}
+tr.us td{background:var(--tint)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;font-size:14px;color:var(--muted);min-width:0}
+.card b{display:block;color:var(--ink);font-family:var(--display);font-size:16px;margin-bottom:4px}
+.card a{font-weight:600;font-size:13px}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.ba{grid-template-columns:1fr}}
+.ba ol{margin:8px 0 0;padding-left:18px;color:var(--muted)}
+.ba ol li{margin:4px 0}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;text-transform:uppercase}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}.tag.warn{background:var(--warn-bg);color:var(--warn)}.tag.bad{background:var(--bad-bg);color:var(--bad)}.tag.ag{background:var(--agent-bg);color:var(--agent)}
+.ph{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:6px;padding:0 6px;font-weight:600;font-size:.92em}
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin:10px 0 6px;overflow-x:auto}
+.fig svg{display:block;width:100%;min-width:600px;height:auto}
+.fig svg text{font-family:var(--sans)}
+.cap{font-size:13px;color:var(--muted);margin:6px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{font-size:13px;padding:4px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.chip b{color:var(--lamp-ink)}
+.quote{font-family:var(--display);font-size:22px;line-height:1.35;max-width:36ch;margin:6px 0 16px}
+ul.tight{margin:6px 0 0;padding-left:18px;max-width:68ch}
+ul.tight li{margin:5px 0}
+.proto{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.proto a.card{text-decoration:none;display:block;transition:border-color .15s}
+.proto a.card:hover{border-color:var(--agent)}
+.proto a.card span{display:block;color:var(--muted);font-weight:400}
+.sources{font-size:13px;color:var(--muted)}
+.sources li{margin:4px 0}
+footer{border-top:1px solid var(--line);padding-block:24px;font-size:13px;color:var(--muted)}
+</style>
+
+<header class="hero">
+ <div class="hero-in">
+  <div>
+   <div class="eyebrow">AI product case study · Project 06</div>
+   <h1>Luma</h1>
+   <p class="lead">A voice-first family companion that listens, plans and asks before it acts.</p>
+   <div class="meta"><span><b>Role</b> Product manager + designer</span><span><b>Timeline</b> 42-day roadmap, Nov 2026</span><span><b>Built</b> 9 live prototypes, design system, MVP</span><span><b>By</b> Vikram Seenivasan</span></div>
+  </div>
+  <svg class="hero-luma" id="luma" viewBox="90 410 210 270"  role="img" aria-label="Luma">
+    <ellipse cx="195" cy="662" rx="80" ry="12" fill="#000" opacity=".25"/>
+    <line x1="195" y1="472" x2="195" y2="452" stroke="#E9D3B4" stroke-width="3" stroke-linecap="round"/>
+    <circle class="orb" cx="195" cy="444" r="22" fill="#FFD48A" opacity=".45"/><circle cx="195" cy="444" r="9" fill="#FFD48A"/>
+    <g class="body">
+      <ellipse cx="117" cy="592" rx="12" ry="21" fill="#EADBC2" transform="rotate(-18 117 592)"/><ellipse cx="273" cy="592" rx="12" ry="21" fill="#EADBC2" transform="rotate(18 273 592)"/>
+      <ellipse cx="170" cy="652" rx="19" ry="9" fill="#E3CCAA"/><ellipse cx="220" cy="652" rx="19" ry="9" fill="#E3CCAA"/>
+      <path d="M195 470 C250 470 272 530 272 585 C272 630 240 652 195 652 C150 652 118 630 118 585 C118 530 140 470 195 470 Z" fill="#F6E7CF"/>
+      <circle cx="155" cy="584" r="10" fill="#F2A7A0" opacity=".7"/><circle cx="235" cy="584" r="10" fill="#F2A7A0" opacity=".7"/>
+      <g class="ex ex-idle"><g class="blink"><ellipse cx="172" cy="555" rx="8" ry="11" fill="#2B2340"/><ellipse cx="218" cy="555" rx="8" ry="11" fill="#2B2340"/><circle cx="175" cy="551" r="2.6" fill="#fff"/><circle cx="221" cy="551" r="2.6" fill="#fff"/></g><path d="M185 585 Q195 594 205 585" fill="none" stroke="#2B2340" stroke-width="3" stroke-linecap="round"/></g>
+      <g class="ex ex-listening"><g class="blink"><ellipse cx="172" cy="553" rx="9.5" ry="13" fill="#2B2340"/><ellipse cx="218" cy="553" rx="9.5" ry="13" fill="#2B2340"/><circle cx="176" cy="548" r="3" fill="#fff"/><circle cx="222" cy="548" r="3" fill="#fff"/></g><ellipse cx="195" cy="588" rx="5" ry="6" fill="#2B2340"/><path class="arc" d="M286 520 Q300 545 286 570" fill="none" stroke="#FFD48A" stroke-width="3" stroke-linecap="round"/><path class="arc" style="animation-delay:.3s" d="M300 505 Q322 545 300 585" fill="none" stroke="#FFD48A" stroke-width="3" stroke-linecap="round" opacity=".6"/></g>
+      <g class="ex ex-thinking"><ellipse cx="174" cy="549" rx="8" ry="10" fill="#2B2340"/><ellipse cx="220" cy="549" rx="8" ry="10" fill="#2B2340"/><circle cx="177" cy="544" r="2.6" fill="#fff"/><circle cx="223" cy="544" r="2.6" fill="#fff"/><path d="M188 588 Q195 584 202 588" fill="none" stroke="#2B2340" stroke-width="3" stroke-linecap="round"/><g class="think-dots" fill="#FFD48A"><circle cx="250" cy="480" r="4"/><circle cx="264" cy="466" r="5"/><circle cx="282" cy="450" r="6"/></g></g>
+      <g class="ex ex-speaking"><g class="blink"><ellipse cx="172" cy="555" rx="8" ry="11" fill="#2B2340"/><ellipse cx="218" cy="555" rx="8" ry="11" fill="#2B2340"/><circle cx="175" cy="551" r="2.6" fill="#fff"/><circle cx="221" cy="551" r="2.6" fill="#fff"/></g><ellipse class="talk" cx="195" cy="588" rx="8" ry="6" fill="#2B2340"/></g>
+      <g class="ex ex-approval"><ellipse cx="172" cy="559" rx="8" ry="10" fill="#2B2340"/><ellipse cx="218" cy="559" rx="8" ry="10" fill="#2B2340"/><circle cx="174" cy="563" r="2.4" fill="#fff"/><circle cx="220" cy="563" r="2.4" fill="#fff"/><path d="M162 536 L180 532" stroke="#2B2340" stroke-width="3" stroke-linecap="round"/><path d="M210 532 L228 536" stroke="#2B2340" stroke-width="3" stroke-linecap="round"/><path d="M187 588 L203 588" stroke="#2B2340" stroke-width="3" stroke-linecap="round"/></g>
+      <g class="ex ex-happy"><path d="M163 556 Q172 545 181 556" fill="none" stroke="#2B2340" stroke-width="3.5" stroke-linecap="round"/><path d="M209 556 Q218 545 227 556" fill="none" stroke="#2B2340" stroke-width="3.5" stroke-linecap="round"/><path d="M182 582 Q195 598 208 582" fill="#2B2340"/></g>
+    </g>
+  </svg>
+ </div>
+</header>
+
+<div class="wrap">
+<nav class="toc" aria-label="Sections"><ol>
+<li><a href="#overview">Overview</a></li><li><a href="#problem">Problem</a></li><li><a href="#opportunity">Opportunity</a></li><li><a href="#landscape">Competitive landscape</a></li><li><a href="#strategy">Product strategy</a></li><li><a href="#journey">User journey</a></li><li><a href="#ai-arch">AI architecture</a></li><li><a href="#agents">Agentic architecture</a></li><li><a href="#context">Context engineering</a></li><li><a href="#memory">Memory design</a></li><li><a href="#voice">Voice UX</a></li><li><a href="#ds">AI design system</a></li><li><a href="#guardrails">Guardrails</a></li><li><a href="#evals">Evaluation</a></li><li><a href="#obs">Observability</a></li><li><a href="#prototype">Working prototype</a></li><li><a href="#metrics">Product metrics</a></li><li><a href="#learnings">Learnings</a></li><li><a href="#reflection">PM reflection</a></li>
+</ol></nav>
+<main>
+
+<section id="overview"><h2><span class="n">01</span>Overview</h2>
+<p>Luma is a character companion for the household organiser. You tell her, out loud, what someone in the family is working on. She remembers it, turns it into a plan, adds the steps to the family’s calendar and tasks once you say yes, and follows up. Under the warm character sit a supervisor, four specialist agents, a family knowledge base, tools over MCP, guardrails and an eval suite.</p>
+<p class="quote">“My wife wants to prepare for her French exam. She has 1.5 hours every evening and finds listening difficult.”</p>
+<p>That one sentence is the thread through this case study: Luma detects the goal, plans five 90-minute sessions with listening first, waits for approval, then tracks progress.</p>
+</section>
+
+<section id="problem"><h2><span class="n">02</span>Problem</h2>
+<p>Family life runs on scattered calendars, lists and one person’s memory. The organiser carries the mental load of who needs what and when, and the follow-through slips: the study plan nobody writes down, the swim bag nobody packs.</p>
+<p>Existing tools split the job. Organiser apps store plans but need typing and never nudge. Assistants answer one person’s questions but don’t know the family. Companion apps are warm but rarely act.</p>
+</section>
+
+<section id="opportunity"><h2><span class="n">03</span>Opportunity</h2>
+<p>Three things changed at once. Voice in and out is now natural enough for quick requests. Models plan and call tools reliably enough to act, not just answer. And companions have shown real demand: Tolan reports 250,000+ active users, about 40% of them parents (TechCrunch, Oct 2026). What’s missing is a companion that acts for the whole family, safely.</p>
+</section>
+
+<section id="landscape"><h2><span class="n">04</span>Competitive landscape</h2>
+<p>Compared on capabilities that matter for a family, not feature lists.</p>
+<div class="tw"><table>
+<thead><tr><th>Product</th><th>Built for</th><th>Memory</th><th>Acts for you</th><th>Gap Luma fills</th></tr></thead>
+<tbody>
+<tr><td>Tolan</td><td>Voice-first character companion for daily life and emotions</td><td>About the one user</td><td>Encourages to-dos; not a tool-using agent</td><td>Same warmth, plus plans and actions for the family</td></tr>
+<tr><td>ChatGPT</td><td>General assistant</td><td>Auto-saved facts you can view, edit, delete</td><td>Agent features, one user at a time</td><td>Shared family context and goal follow-through</td></tr>
+<tr><td>Gemini</td><td>General assistant inside Google</td><td>Saved facts plus Gmail, Docs, Calendar with permission</td><td>Strong where your data lives in Google</td><td>A household view across people, not accounts</td></tr>
+<tr><td>Claude</td><td>General assistant and agent platform</td><td>Memory and projects; connectors to apps</td><td>Agentic with tools and approvals</td><td>A consumer family surface and character</td></tr>
+<tr><td>Pi (Pi Journeys)</td><td>Supportive companion, relaunched Aug 2026 around continuity</td><td>Long-running relationship</td><td>Conversation-first</td><td>Turning support into scheduled action</td></tr>
+<tr><td>Character.AI</td><td>Role-play and creation; open-ended chat ended for under-18s</td><td>Per character</td><td>No</td><td>Grounded, family-safe help</td></tr>
+<tr class="us"><td>Luma</td><td>The household organiser</td><td>Shared, per-person, user-controlled</td><td>Agents over MCP, approval on every change</td><td>—</td></tr>
+</tbody></table></div>
+<p class="cap">As of November 2026. Sources at the end.</p>
+</section>
+
+<section id="strategy"><h2><span class="n">05</span>Product strategy</h2>
+<p>Why Luma: be the one place a family says what it needs and trusts what happens next. The bet is that warmth earns the habit and follow-through earns the trust.</p>
+<div class="grid">
+<div class="card"><b>Understand</b>Turn a spoken sentence into a goal, a person, a time budget and a weak spot.</div>
+<div class="card"><b>Remember</b>Per-person memory the family can see, edit and delete.</div>
+<div class="card"><b>Plan</b>Fit plans to real calendars and stated limits.</div>
+<div class="card"><b>Act, with a yes</b>Nothing changes outside Luma until someone approves.</div>
+<div class="card"><b>Follow up</b>Track progress and check in, not just remind.</div>
+</div>
+<p style="margin-top:14px"><b>Non-goals:</b> medical, legal or financial advice; payments; reading private messages; kids using Luma unsupervised.</p>
+</section>
+
+<section id="journey"><h2><span class="n">06</span>User journey</h2>
+<div class="ba">
+<div class="card"><b>Before Luma</b><ol><li>Hears “I need to study for my exam” at dinner</li><li>Searches for materials, guesses a schedule</li><li>Types events into a calendar app</li><li>Forgets to check in; the plan fades by day three</li></ol></div>
+<div class="card"><b>With Luma</b><ol><li>Says it out loud, once</li><li>Luma detects the goal and the weak spot</li><li>Approves a 5-session plan with one tap or “yes”</li><li>Luma tracks sessions and follows up after each</li></ol></div>
+</div>
+</section>
+
+<section id="ai-arch"><h2><span class="n">07</span>AI architecture</h2>
+<p>Every request takes the same path. The two steps that can stop it are guardrails and human approval.</p>
+<div class="fig"><svg viewBox="0 0 900 150" role="img" aria-label="Luma request path from user to action">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+<g font-size="13" text-anchor="middle">
+<rect x="12" y="14" width="128" height="44" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.25"/><text x="76" y="41" fill="var(--ink)" font-weight="600">User</text>
+<line x1="144" y1="36" x2="156" y2="36" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#ah)"/>
+<rect x="162" y="14" width="128" height="44" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.25"/><text x="226" y="41" fill="var(--ink)" font-weight="600">Mobile app</text>
+<line x1="294" y1="36" x2="305" y2="36" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#ah)"/>
+<rect x="311" y="14" width="128" height="44" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.25"/><text x="375" y="41" fill="var(--ink)" font-weight="600">Context manager</text>
+<line x1="443" y1="36" x2="455" y2="36" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#ah)"/>
+<rect x="461" y="14" width="128" height="44" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.25"/><text x="525" y="41" fill="var(--ink)" font-weight="600">Orchestrator</text>
+<line x1="593" y1="36" x2="604" y2="36" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#ah)"/>
+<rect x="610" y="14" width="128" height="44" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.25"/><text x="674" y="41" fill="var(--ink)" font-weight="600">Agents</text>
+<line x1="742" y1="36" x2="754" y2="36" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#ah)"/>
+<rect x="760" y="14" width="128" height="44" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.25"/><text x="824" y="41" fill="var(--ink)" font-weight="600">RAG / Memory</text>
+<rect x="12" y="92" width="128" height="44" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.25"/><text x="76" y="119" fill="var(--ink)" font-weight="600">MCP / Tools</text>
+<line x1="144" y1="114" x2="193" y2="114" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#ah)"/>
+<rect x="199" y="92" width="128" height="44" rx="10" fill="var(--bad-bg)" stroke="var(--bad)" stroke-width="1.25"/><text x="263" y="119" fill="var(--bad)" font-weight="600">Guardrails</text>
+<line x1="331" y1="114" x2="380" y2="114" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#ah)"/>
+<rect x="386" y="92" width="128" height="44" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.25"/><text x="450" y="119" fill="var(--ink)" font-weight="600">Evals</text>
+<line x1="518" y1="114" x2="567" y2="114" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#ah)"/>
+<rect x="573" y="92" width="128" height="44" rx="10" fill="var(--bad-bg)" stroke="var(--bad)" stroke-width="1.25"/><text x="637" y="119" fill="var(--bad)" font-weight="600">Human approval</text>
+<line x1="705" y1="114" x2="754" y2="114" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#ah)"/>
+<rect x="760" y="92" width="128" height="44" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.25"/><text x="824" y="119" fill="var(--ink)" font-weight="600">Action</text>
+<path d="M824 58 V75 H76 V86" fill="none" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#ah)"/>
+</g></svg></div>
+<p class="cap">Row 1 runs left to right, row 2 continues. Coral boxes can stop a request.</p>
+</section>
+
+<section id="agents"><h2><span class="n">08</span>Agentic architecture</h2>
+<p>A supervisor reads intent and routes to specialists. Each agent owns a slice of work and a fixed set of tools, and never does another’s job.</p>
+<div class="tw"><table>
+<thead><tr><th>Agent</th><th>Owns</th><th>Tools</th><th>Never does</th></tr></thead>
+<tbody>
+<tr><td>Supervisor</td><td>Routing, turn state, recovery</td><td>Routes to agents</td><td>Acts without approval</td></tr>
+<tr><td>Companion</td><td>Voice, tone, yes/no questions</td><td>None</td><td>States facts no agent returned</td></tr>
+<tr><td>Knowledge</td><td>Notes, memory, calendar reads, in parallel</td><td>search_knowledge, get_calendar, get_memory</td><td>Writes anything</td></tr>
+<tr><td>Planning</td><td>Goals, plans, practice sessions</td><td>update_goal, generate_practice, create_task</td><td>Touches the shared calendar</td></tr>
+<tr><td>Action</td><td>Changes outside Luma</td><td>schedule_event, save_memory, send_message</td><td>Runs without an approval card</td></tr>
+</tbody></table></div>
+<p><b>Handoffs</b> show only when they change the outcome, e.g. Action hands back to Planning when 8 pm clashes. Built and tested in the Voice + Multi-Agent and Agent &amp; Tools prototypes.</p>
+</section>
+
+<section id="context"><h2><span class="n">09</span>Context engineering</h2>
+<p>The order of context is a product decision: goals and limits come before memory, so “1.5 hours” always wins.</p>
+<div class="chips"><span class="chip"><b>1</b> System: persona, safety rules</span><span class="chip"><b>2</b> User profile: family, time zone</span><span class="chip"><b>3</b> Current goal</span><span class="chip"><b>4</b> Conversation: recent turns, older summarised</span><span class="chip"><b>5</b> Memory: retrieved</span><span class="chip"><b>6</b> RAG: notes and material</span><span class="chip"><b>7</b> Tool results: live</span><span class="chip"><b>8</b> Output schema</span></div>
+<p>Excluded on purpose: other members’ notes unless relevant, expired plans, deleted items, raw chat history. Output is a <code>study_plan</code> JSON whose minutes must add up and whose unknowns stay <code>null</code> and become questions.</p>
+</section>
+
+<section id="memory"><h2><span class="n">10</span>Memory design</h2>
+<div class="tw"><table>
+<thead><tr><th>Type</th><th>Example</th><th>Lifetime</th></tr></thead>
+<tbody>
+<tr><td>Short-term</td><td>The last few turns of this conversation</td><td>Until the app closes</td></tr>
+<tr><td>Semantic</td><td>Has 1.5 hours free every evening</td><td>Until edited or deleted</td></tr>
+<tr><td>Episodic</td><td>Tue: missed numbers in fast audio; 0.75× helped</td><td>Ranked by recency</td></tr>
+<tr><td>Procedural</td><td>Listening before vocabulary</td><td>Until edited or deleted</td></tr>
+</tbody></table></div>
+<p>Rules: nothing saved without a yes; every memory is visible, editable and deletable; per person, so the son’s book never becomes the wife’s; ID and card numbers are never stored.</p>
+</section>
+
+<section id="voice"><h2><span class="n">11</span>Voice UX</h2>
+<div class="grid">
+<div class="card"><b>Listening</b>Wide eyes, live words on screen as you speak.</div>
+<div class="card"><b>Thinking</b>Thinking face plus a caption naming the work in family terms.</div>
+<div class="card"><b>Speaking</b>Voice with captions; voice is never the only channel.</div>
+<div class="card"><b>Interruption</b>One tap on the mic stops Luma mid-sentence and listens.</div>
+<div class="card"><b>Confirmation</b>Changes read back as a yes/no; answer by voice or tap.</div>
+</div>
+<p style="margin-top:12px">Ten states in all, each with a face, a caption and a next action, designed for a Rive character handoff.</p>
+</section>
+
+<section id="ds"><h2><span class="n">12</span>AI design system</h2>
+<p>Lamp gold is Luma’s warmth (mic, orb, primary actions); indigo marks the machinery (agents, tools, handoffs). That split lets a family see at a glance what Luma is doing versus what she is.</p>
+<p>13 components with live previews: AI Message, Voice Button, Character (6 moods), Thinking State, Tool Call, Agent Handoff, Memory Card, Goal Card, Task Card, Approval Card, Confidence Indicator, Error State, Human Review.</p>
+</section>
+
+<section id="guardrails"><h2><span class="n">13</span>Guardrails</h2>
+<div class="tw"><table>
+<thead><tr><th>Layer</th><th>Catches</th><th>How</th></tr></thead>
+<tbody>
+<tr><td>Input</td><td>Prompt injection, PII</td><td>Flags instruction-like text; redacts ID and card numbers before the model</td></tr>
+<tr><td>Tool</td><td>Bad arguments, runaway loops, injected notes</td><td>Allowlist, argument checks, 5-call cap, strips instructions from note text</td></tr>
+<tr><td>Approval</td><td>Unauthorised actions</td><td>Calendar, messages, deletes and memory wait for a yes</td></tr>
+<tr><td>Output</td><td>False “done” claims, leaked PII</td><td>Blocks “added / booked / sent” when no tool confirmed it</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="evals"><h2><span class="n">14</span>Evaluation</h2>
+<p>A 30-case family golden dataset across 8 categories: normal, ambiguous, incomplete, adversarial, unsafe, tool failure, retrieval failure, memory failure. Each case has an expected behaviour, required and forbidden tools, and an approval rule.</p>
+<ul class="tight">
+<li><b>Trajectory checks</b> (deterministic, run first): required tools, no forbidden actions, approval requested, no unnecessary calls, recovery, honesty.</li>
+<li><b>LLM judge</b> (1–5): correctness, relevance, groundedness, helpfulness, safety. Pass = trajectory pass, average 3.8+, safety 4+.</li>
+<li><b>Regression:</b> prompt v1 without guardrails vs v2 with them, on the same 30 cases.</li>
+</ul>
+<p class="cap">Version 1 (no guardrails) and version 2 (guardrails on) are scored on the same 30 cases in the Trust Lab. Results will be published here after the full run; until then no pass rate is claimed.</p>
+</section>
+
+<section id="obs"><h2><span class="n">15</span>Observability</h2>
+<p>The Trust Lab’s dashboard tracks p50/p95 latency, estimated tokens and cost at your rate, retrieval quality, tool errors per call, agent success, failed tasks and escalation rate, with pass rate by category and a run log. Escalations (approvals, clarifying questions, declines) are counted as healthy, not as failures.</p>
+</section>
+
+<section id="prototype"><h2><span class="n">16</span>Working prototype</h2>
+<p>Every layer was built as a working prototype on Claude, not a mockup. The MVP is public; the other prototypes run on Claude and are shown in interviews.</p>
+<div class="proto">
+<a class="card" href="mvp/"><b>Luma MVP · public demo</b><span>Goal → plan → approval → tasks → progress. Runs in your browser, no sign-in</span></a>
+<a class="card" href="https://vikram-pm.github.io/p06-luma-demo.mp4"><b>Demo video</b><span>The MVP flow end to end, with captions</span></a>
+<div class="card"><b>Voice + Multi-Agent</b><span>Supervisor, parallel agents, handoffs, memory, interruption</span></div>
+<div class="card"><b>Agent &amp; Tools</b><span>Agent loop, 7 tools, MCP traffic, failure recovery</span></div>
+<div class="card"><b>Knowledge Layer</b><span>RAG with filters, hybrid search, citations, fallback</span></div>
+<div class="card"><b>Trust Lab</b><span>Golden dataset, judge, guardrails, approvals, ops</span></div>
+</div>
+</section>
+
+<section id="metrics"><h2><span class="n">17</span>Product metrics</h2>
+<div class="tw"><table>
+<thead><tr><th>Metric</th><th>Definition</th><th>Target</th></tr></thead>
+<tbody>
+<tr><td>Activation</td><td>Household approves its first plan in week 1</td><td>40%</td></tr>
+<tr><td>7-day retention</td><td>Household active on day 7</td><td>35%</td></tr>
+<tr><td>Goal completion</td><td>Planned sessions done</td><td>60%</td></tr>
+<tr><td>Task success</td><td>Requests completed without a redo</td><td>85%</td></tr>
+<tr><td>Agent success rate</td><td>Golden-dataset pass rate</td><td>90%+, zero safety fails</td></tr>
+<tr><td>Tool selection accuracy</td><td>Trajectory checks passed</td><td>95%</td></tr>
+<tr><td>Retrieval accuracy</td><td>Answers with groundedness 4+</td><td>90%</td></tr>
+<tr><td>Memory accuracy</td><td>Memory-failure cases passed</td><td>90%</td></tr>
+<tr><td>Latency</td><td>p95 voice turn to first words</td><td>Under 3 s</td></tr>
+<tr><td>Cost / user</td><td>Model + infra per active household per month</td><td>Set against pricing tests</td></tr>
+</tbody></table></div>
+<p class="cap">Targets are starting hypotheses for the MVP, to be reset after the first cohort.</p>
+</section>
+
+<section id="learnings"><h2><span class="n">18</span>Learnings</h2>
+<ul class="tight">
+<li><b>What worked:</b> building each layer as a live prototype. A RAG page you can break with a bad threshold teaches more than a diagram of one.</li>
+<li><b>What failed:</b> the roadmap’s first examples used AI-PM interview prep. Real family moments (a French exam, Saturday swimming) showed the product far better, so every prototype switched to them.</li>
+<li><b>What surprised me:</b> how much of the product lives in the approval step. Getting the yes/no wording, voice read-back and undo right mattered more than prompt tuning.</li>
+<li><b>What I’d change:</b> retrieval uses concept matching in the page; production needs real embeddings and evaluated thresholds. Tools are simulated; the next step is real calendar and task connectors.</li>
+<li><b>What I’d build next:</b> shared family accounts with per-person permissions, the Rive character wired to agent state, and weekly follow-up summaries.</li>
+</ul>
+</section>
+
+<section id="reflection"><h2><span class="n">19</span>PM reflection</h2>
+<ul class="tight">
+<li><b>Product decisions:</b> one end-to-end workflow (a family member’s study plan) over four shallow ones; a character for trust, not novelty.</li>
+<li><b>AI trade-offs:</b> a quick model for routing and a stronger one for planning; three parallel lookups cost more compute but cut wait time.</li>
+<li><b>Technical constraints:</b> API keys stay server-side, which is why prototypes run through Claude’s built-in connection and the app design puts model calls behind a server function.</li>
+<li><b>User control:</b> approvals on every outside change, visible memory, undo.</li>
+<li><b>Safety:</b> layered guardrails, no medical dosing, no storing ID numbers, kids never unsupervised.</li>
+<li><b>Evaluation:</b> deterministic checks decide tools and approvals; the LLM judge scores quality; people review safety fails.</li>
+<li><b>Business:</b> households pay for follow-through, not chat. First test: a fake-door pricing page after week-one activation.</li>
+</ul>
+</section>
+
+<section id="sources"><h2><span class="n">·</span>Sources</h2>
+<ul class="sources">
+<li><a href="https://techcrunch.com/2026/10/19/tolan-snags-30m-for-its-ai-companion-that-helps-users-navigate-life">Tolan raises $30M, TechCrunch, Oct 2026</a></li>
+<li><a href="https://www.renascence.io/news/32027/inflection-ai-relaunches-with-pi-journeys-after-microsoft-exit">Inflection relaunches with Pi Journeys, Renascence, Aug 2026</a></li>
+<li><a href="https://andrew.ooo/answers/claude-dreaming-vs-chatgpt-memory-vs-gemini-memory-may-2026/">ChatGPT, Gemini and Claude memory compared, May 2026</a></li>
+<li><a href="https://techcrunch.com/2025/10/29/character-ai-is-killing-the-chatbot-experience-for-minors/">Character.AI ends open-ended chat for minors, TechCrunch, Oct 2025</a></li>
+</ul>
+</section>
+</main>
+</div>
+<footer><div style="max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))">Luma is a portfolio concept by Vikram Seenivasan. <a href="https://vikram-pm.github.io/">Back to the portfolio</a></div></footer>
+
+</body></html>
